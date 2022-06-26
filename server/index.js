@@ -42,6 +42,11 @@ app.get('/users', (req, res) => {
     );
 });
 
+// This is getting ready to receive the frontend information that will create a new card.
+app.post("/createcard", (req, res) => {
+
+});
+
 //Listening to incoming connections
 app.listen(port, (err) => {
     if (err) {
