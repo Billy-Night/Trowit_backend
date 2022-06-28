@@ -44,7 +44,26 @@ app.get('/users', (req, res) => {
 
 // This is getting ready to receive the frontend information that will create a new card.
 app.post("/createcard", (req, res) => {
-
+    let newCard = {
+        type: req.body.type,
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        title: req.body.title,
+        department: req.body.department,
+        company: req.body.company,
+        phone: req.body.phone,
+        email: req.body.email,
+        address: req.body.address,
+        website: req.body.website,
+        link: req.body.link  
+    };
+    connection.query('INSERT INTO cards SET ?', newCard, (err) => {
+        if(err) {
+            res.status(500).send('Server error, could not add new card into DB')
+        } else {
+            res.status(201).send("Success adding the card!");
+        }
+    });
 });
 
 //Listening to incoming connections
