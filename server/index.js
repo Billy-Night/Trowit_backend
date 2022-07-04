@@ -21,8 +21,15 @@ connection.connect((err) => {
     }
 });
 
+//express.json() and express.urlencoded() is needed for POST and PUT requests, because in both these requests you are sending data (in the form of some data object) to the server and you are asking the server to accept or store that data (object), which is enclosed in the body (req.body) of that POST Request
+
 //Insure that all our routes are able to read a JSON formatted request body.
 app.use(express.json());
+
+//This is a method inbuilt in express to recognize the incoming Request Object as a JSON Object. This method is called as a middleware in your application using the code: 
+app.use(express.urlencoded({ extended: false }));
+//You have to explicitly set extended for express.urlendcoded() since the default value is going to change in the next major version.
+
 
 app.get("/", (req, res) => {
     res.send("Welcome to Trowit backend, check your console to see if your connected to the database");
@@ -69,9 +76,9 @@ app.post("/createcard", (req, res) => {
 //Listening to incoming connections
 app.listen(port, (err) => {
     if (err) {
-        console.error('Somthing bad happended');
+        console.error('Something bad happened');
     } else {
-        console.log(`Server is runnning on ${port}`);
+        console.log(`Server is running on ${port}`);
     }
 }); 
 
