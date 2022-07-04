@@ -1,13 +1,13 @@
+//import express
+const express = require('express');
 //Require the dotenv package and run config(). It will set for us all the environment variables we defined in the .env file.
 require("dotenv").config();
-
 //to import the config file use :
 const connection = require("../db-config.js");
-
 //set up a variable that has all the methods of express in one place.
-const express = require('express');
-
 const app = express();
+//import cors
+const cors = require("cors");
 
 //Set up the port to run off the .env or 5000
 const port = process.env.PORT ?? 5000;
@@ -30,6 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //You have to explicitly set extended for express.urlendcoded() since the default value is going to change in the next major version.
 
+//Now to relax cross-origin resource sharing. use cors it is a middleware that can be used to enable CORS with various options
+app.use(cors());
 
 app.get("/", (req, res) => {
     res.send("Welcome to Trowit backend, check your console to see if your connected to the database");
@@ -62,7 +64,7 @@ app.post("/createcard", (req, res) => {
         email: req.body.email,
         address: req.body.address,
         website: req.body.website,
-        link: req.body.link  
+        link: req.body.link
     };
     connection.query('INSERT INTO cards SET ?', newCard, (err) => {
         if(err) {
