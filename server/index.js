@@ -6,6 +6,10 @@ require("dotenv").config();
 const connection = require("../db-config.js");
 //set up a variable that has all the methods of express in one place.
 const app = express();
+
+//import bcrypt 
+const bcrypt = require("bcrypt");
+
 //import cors
 const cors = require("cors");
 
@@ -75,6 +79,35 @@ app.post("/createcard", (req, res) => {
     });
 });
 
+//Add the route to receive a new user from the sign-up page
+app.post("/registration", (req, res) => {
+    bcrypt
+     .hash(req.body.hash_password, 10)
+     .then((hashedPassword) => {
+        let newUser = {
+            // image_url: req.body.image_url,
+            // first_name: req.body.first_name,
+            // last_name: req.body.last_name,
+            email: req.body.email,
+            hash_password: hashedPassword,
+            // birthday: req.body.email,
+            // subscription: req.body.subscription,
+            // date: req.body.date,
+        };
+        connection.query('INSERT INTO users SET ?', newUser, (err) => {
+            if(err) {
+                res
+                .status(500)
+                .send('Server error, could not register the new user into the DB');
+            } else {
+                res.status(201).send("Success registering the user!")
+            }
+        });
+     })
+    .catch((hashError) => 
+    console.error(`There was an error encrypting the password. Error: ${hashError}`));
+});
+
 //Listening to incoming connections
 app.listen(port, (err) => {
     if (err) {
@@ -84,3 +117,10 @@ app.listen(port, (err) => {
     }
 }); 
 
+// image_url: req.body.image_url,
+//             first_name: req.body.first_name,
+//             last_name: req.body.last_name,
+//             email: req.body.email,
+//             password: hashedPassword,
+//             birthday: req.body.email,
+//             subscription: req.body
