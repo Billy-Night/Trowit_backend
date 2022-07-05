@@ -10,6 +10,9 @@ const app = express();
 //import bcrypt 
 const bcrypt = require("bcrypt");
 
+//import json web token
+const jwt = require("jsonwebtoken");
+
 //import cors
 const cors = require("cors");
 
@@ -57,7 +60,8 @@ app.get('/users', (req, res) => {
 
 // This is getting ready to receive the frontend information that will create a new card.
 app.post("/createcard", (req, res) => {
-    let newCard = {
+    console.log(req.body);
+    let Card = {
         type: req.body.type,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
@@ -68,9 +72,9 @@ app.post("/createcard", (req, res) => {
         email: req.body.email,
         address: req.body.address,
         website: req.body.website,
-        link: req.body.link
+        link: req.body.link,
     };
-    connection.query('INSERT INTO cards SET ?', newCard, (err) => {
+    connection.query('INSERT INTO cards SET ?', Card, (err) => {
         if(err) {
             res.status(500).send('Server error, could not add new card into DB')
         } else {
@@ -108,6 +112,45 @@ app.post("/registration", (req, res) => {
     console.error(`There was an error encrypting the password. Error: ${hashError}`));
 });
 
+// Path to Login into the app
+app.post("/log", (req, res) => {
+    const user = {
+      email: req.body.email,
+      hash_password: req.body.hash_password,
+    }
+  
+    // query the DB to check email and pass
+    connection.query(
+      "SELECT * FROM users WHERE email=?", user.email,
+      (err, results) => {
+        if (err) {
+          res.status(500).send("Email not found");
+        } else {
+          bcrypt
+            .compare(user.hash_password, results[0].hash_password)
+            .then((isAMatch) => {
+              if (isAMatch) {
+    //Put in the JWT 
+            const generatedToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET
+            );
+                res.status(200).json({
+                  message: "Successfully logged in!",
+                  token: generatedToken,
+                  loggedIn: true,
+                  first_name: results[0].first_name,
+                });
+              } else {
+                res.status(500).send("Wrong password");
+              }
+            })
+            .catch((passwordError) => 
+            console.error("Error trying to decrypt the password")
+            );
+          }
+        }
+    );
+});
+
 //Listening to incoming connections
 app.listen(port, (err) => {
     if (err) {
@@ -116,11 +159,3 @@ app.listen(port, (err) => {
         console.log(`Server is running on ${port}`);
     }
 }); 
-
-// image_url: req.body.image_url,
-//             first_name: req.body.first_name,
-//             last_name: req.body.last_name,
-//             email: req.body.email,
-//             password: hashedPassword,
-//             birthday: req.body.email,
-//             subscription: req.body
