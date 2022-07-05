@@ -166,7 +166,7 @@ const authenticateUser = (req, res, next) => {
     });
 };
 
-app.get('/profile', authenticateUser, (req, res) => {
+app.get('/avatar', authenticateUser, (req, res) => {
     //here we have access to what we did on the req object in the middleware
     //! need to check the req.foundUser
     connection.query(
