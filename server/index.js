@@ -112,7 +112,7 @@ app.post("/registration", (req, res) => {
     console.error(`There was an error encrypting the password. Error: ${hashError}`));
 });
 
-// Path to Login into the app
+//Route for Login into the app
 app.post("/log", (req, res) => {
     const user = {
       email: req.body.email,
@@ -150,6 +150,36 @@ app.post("/log", (req, res) => {
         }
     );
 });
+
+//The middle ware used to authenticate the user
+const authenticateUser = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+    //check if the user has a token
+    if (token === undefined) return res.sendStatus(401);
+    //check that it is a valid token
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        //finally if there's no errors we go to the next middleware
+        req.foundUser = user;
+        next();
+    });
+};
+
+app.get('/profile', authenticateUser, (req, res) => {
+    //here we have access to what we did on the req object in the middleware
+    //! need to check the req.foundUser
+    connection.query(
+        'SELECT first_name, last_name FROM users WHERE email = ?', req.foundUser.email, (err, result) => {
+            if (err) {
+                res.sendStatus(500);
+            } else {
+                res.json(result[0]);
+            }
+        }
+    );
+});
+
 
 //Listening to incoming connections
 app.listen(port, (err) => {
