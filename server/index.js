@@ -153,6 +153,7 @@ app.post("/log", (req, res) => {
 
 //The middle ware used to authenticate the user
 const authenticateUser = (req, res, next) => {
+    console.log(req.headers.authorization);
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
     //check if the user has a token
@@ -169,6 +170,7 @@ const authenticateUser = (req, res, next) => {
 app.get('/avatar', authenticateUser, (req, res) => {
     //here we have access to what we did on the req object in the middleware
     //! need to check the req.foundUser
+    console.log(req.foundUser.email);
     connection.query(
         'SELECT first_name, last_name FROM users WHERE email = ?', req.foundUser.email, (err, result) => {
             if (err) {
@@ -179,7 +181,6 @@ app.get('/avatar', authenticateUser, (req, res) => {
         }
     );
 });
-
 
 //Listening to incoming connections
 app.listen(port, (err) => {
