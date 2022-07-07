@@ -73,6 +73,8 @@ app.post("/createcard", (req, res) => {
         address: req.body.address,
         website: req.body.website,
         link: req.body.link,
+        colour: req.body.colour,
+        users_id: req.body.users_id
     };
     connection.query('INSERT INTO cards SET ?', Card, (err) => {
         if(err) {
@@ -137,6 +139,7 @@ app.post("/log", (req, res) => {
                   message: "Successfully logged in!",
                   token: generatedToken,
                   loggedIn: true,
+                  id: results[0].id,
                   first_name: results[0].first_name,
                 });
               } else {
@@ -170,9 +173,10 @@ const authenticateUser = (req, res, next) => {
 app.get('/avatar', authenticateUser, (req, res) => {
     //here we have access to what we did on the req object in the middleware
     //! need to check the req.foundUser
-    // console.log(req.foundUser.email);
+    // console.log("Hello from the server");
+    // console.log(req);
     connection.query(
-        'SELECT first_name, last_name FROM users WHERE email = ?', req.foundUser.email, (err, result) => {
+        'SELECT id, first_name, last_name FROM users WHERE email = ?', req.foundUser.email, (err, result) => {
             if (err) {
                 res.sendStatus(500);
             } else {
@@ -181,6 +185,19 @@ app.get('/avatar', authenticateUser, (req, res) => {
         }
     );
 });
+
+app.get('/cards/:id', (req, res) => {
+    console.log(req.params.id);
+    connection.query(
+        'SELECT * FROM cards WHERE users_id = ?', req.params.id, (err, result) => {
+            if (err) {
+                res.sendStatus(500);
+            } else {
+                res.json(result)
+            }
+        }
+    )
+})
 
 //Listening to incoming connections
 app.listen(port, (err) => {
