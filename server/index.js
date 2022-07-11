@@ -46,6 +46,8 @@ app.get("/", (req, res) => {
 
 app.get('/users', (req, res) => {
     connection.query('SELECT * FROM users', (err, result) => {
+        //! look into the return the connection pool below
+        //connection.release();
         if(err) {
             console.error(err);
             res.status(500).send('Error retrieving users from database');
@@ -73,7 +75,10 @@ app.post("/createcard", (req, res) => {
         address: req.body.address,
         website: req.body.website,
         link: req.body.link,
+        colour: req.body.colour,
+        users_id: req.body.users_id
     };
+    //To avoid SQL injection use the placeholder ?
     connection.query('INSERT INTO cards SET ?', Card, (err) => {
         if(err) {
             res.status(500).send('Server error, could not add new card into DB')
@@ -137,6 +142,7 @@ app.post("/log", (req, res) => {
                   message: "Successfully logged in!",
                   token: generatedToken,
                   loggedIn: true,
+                  id: results[0].id,
                   first_name: results[0].first_name,
                 });
               } else {
@@ -153,7 +159,7 @@ app.post("/log", (req, res) => {
 
 //The middle ware used to authenticate the user
 const authenticateUser = (req, res, next) => {
-    console.log(req.headers.authorization);
+    // console.log(req.headers.authorization);
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
     //check if the user has a token
@@ -170,9 +176,10 @@ const authenticateUser = (req, res, next) => {
 app.get('/avatar', authenticateUser, (req, res) => {
     //here we have access to what we did on the req object in the middleware
     //! need to check the req.foundUser
-    console.log(req.foundUser.email);
+    // console.log("Hello from the server");
+    // console.log(req);
     connection.query(
-        'SELECT first_name, last_name FROM users WHERE email = ?', req.foundUser.email, (err, result) => {
+        'SELECT id, first_name, last_name FROM users WHERE email = ?', req.foundUser.email, (err, result) => {
             if (err) {
                 res.sendStatus(500);
             } else {
@@ -181,6 +188,52 @@ app.get('/avatar', authenticateUser, (req, res) => {
         }
     );
 });
+
+app.get('/cards/:id', (req, res) => {
+    console.log(req.params.id);
+    connection.query(
+        'SELECT * FROM cards WHERE users_id = ?', req.params.id, (err, result)  => {
+            if (err) {
+                res.sendStatus(500);
+            } else {
+                res.json(result)
+            }
+        }
+    )
+})
+
+app.post('/create-contact', (req, res) => {
+    let contactCard = {
+        image: req.body.image,
+        full_name: req.body.full_name,
+        title: req.body.title,
+        company: req.body.company,
+        email: req.body.email,
+        phone: req.body.phone,
+        website: req.body.website,
+        linkdin: req.body.linkdin,
+        documents: req.body.documents,
+        files: req.body.files,
+        add_date: req.body.add_date,
+        add_time: req.body.add_time,
+        contact_type: req.body.contact_type,
+        tag1: req.body.tag1,
+        tag2: req.body.tag2,
+        tag3: req.body.tag3,
+        tag4: req.body.tag4,
+        notes: req.body.notes,
+        users_id: req.body.user_id
+    }
+    connection.query(
+        'UPDATE contacts SET ?', contactCard, (err) => {
+            if (err) {
+                res.status(500).send('There was an error adding the contact card to the DB!');
+            } else {
+                res.status(201).send('The contact card was added to the DB');
+            }
+        }
+    )
+})
 
 //Listening to incoming connections
 app.listen(port, (err) => {
