@@ -78,7 +78,7 @@ app.post("/createcard", (req, res) => {
         colour: req.body.colour,
         users_id: req.body.users_id
     };
-    //To avoid SQL injection use the placeholder ?
+    //To avoid SQL injection use the placeholder (?)
     connection.query('INSERT INTO cards SET ?', Card, (err) => {
         if(err) {
             res.status(500).send('Server error, could not add new card into DB')
@@ -200,7 +200,7 @@ app.get('/cards/:id', (req, res) => {
             }
         }
     )
-})
+});
 
 app.post('/create-contact', (req, res) => {
     let contactCard = {
@@ -222,18 +222,17 @@ app.post('/create-contact', (req, res) => {
         tag3: req.body.tag3,
         tag4: req.body.tag4,
         notes: req.body.notes,
-        users_id: req.body.user_id
+        users_id: req.body.users_id
     }
-    connection.query(
-        'INSERT INTO contacts SET ?', contactCard, (err) => {
-            if (err) {
-                res.status(500).send('There was an error adding the contact card to the DB!');
+    console.log(contactCard);
+        connection.query('INSERT INTO contacts SET ?', contactCard, (err) => {
+            if(err) {
+                res.status(500).send('Server error, could not add new card into DB')
             } else {
-                res.status(201).send('The contact card was added to the DB');
+                res.status(201).send("Success adding the card!");
             }
-        }
-    )
-})
+        });
+    });
 
 //Listening to incoming connections
 app.listen(port, (err) => {
