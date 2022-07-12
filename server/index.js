@@ -225,7 +225,7 @@ app.post('/create-contact', (req, res) => {
         users_id: req.body.user_id
     }
     connection.query(
-        'UPDATE contacts SET ?', contactCard, (err) => {
+        'INSERT INTO contacts SET ?', contactCard, (err) => {
             if (err) {
                 res.status(500).send('There was an error adding the contact card to the DB!');
             } else {
