@@ -64,6 +64,8 @@ app.get('/users', (req, res) => {
 app.post("/createcard", (req, res) => {
     console.log(req.body);
     let Card = {
+        id: req.body.id,
+        image: req.body.image,
         type: req.body.type,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
@@ -75,8 +77,16 @@ app.post("/createcard", (req, res) => {
         address: req.body.address,
         website: req.body.website,
         link: req.body.link,
-        colour: req.body.colour,
-        users_id: req.body.users_id
+        pdf: req.body.pdf,
+        twitter: req.body.twitter,
+        instagram: req.body.instagram,
+        linkedin: req.body.linkedin,
+        facebook: req.body.facebook,
+        youtube: req.body.youtube,
+        whatsapp: req.body.whatsapp,
+        documents: req.body.documents,
+        files: req.body.files,
+        users_id: req.body.users_id,
     };
     //To avoid SQL injection use the placeholder (?)
     connection.query('INSERT INTO cards SET ?', Card, (err) => {
