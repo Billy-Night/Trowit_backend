@@ -257,9 +257,12 @@ app.patch('/update-user/:id', (req, res) => {
     connection.query(
         'UPDATE users SET ? WHERE id = ?', [user, uId], (err) => {
             if (err) {
+                console.log(res);
                 res.status(500).send("There is a problem");
+                console.log("There's a problem")
             } else {
                 res.status(200).send("Done!!");
+                console.log("Good")
             }
         }
     )
