@@ -190,7 +190,7 @@ app.get('/avatar', authenticateUser, (req, res) => {
 });
 
 app.get('/cards/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     connection.query(
         'SELECT * FROM cards WHERE users_id = ?', req.params.id, (err, result)  => {
             if (err) {
@@ -233,6 +233,43 @@ app.post('/create-contact', (req, res) => {
             }
         });
     });
+
+app.get('/contacts/:id', (req, res) => {
+    console.log(req.params.id);
+    connection.query(
+        'SELECT * FROM contacts WHERE users_id = ?', req.params.id, (err, result)  => {
+            if (err) {
+                res.sendStatus(500);
+            } else {
+                res.json(result)
+            }
+        }
+    )
+});
+
+app.patch('/update-user/:id', (req, res) => {
+    console.log(req.params.id);
+    let uId = req.params.id;
+    let user = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name
+    }
+    connection.query(
+        'UPDATE users SET ? WHERE id = ?', [user, uId], (err) => {
+            if (err) {
+                res.status(500).send("There is a problem");
+            } else {
+                res.status(200).send("Done!!");
+            }
+        }
+    )
+})
+
+// app.post('/order-physical-card/:id', (req, res) => {
+//     connection.query(
+//         'INSERT INTO order_physical_card '
+//     )
+// })
 
 //Listening to incoming connections
 app.listen(port, (err) => {
