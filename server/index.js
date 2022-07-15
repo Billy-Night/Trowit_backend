@@ -206,7 +206,20 @@ app.get('/cards/:id', (req, res) => {
             if (err) {
                 res.sendStatus(500);
             } else {
-                res.json(result)
+                res.json(result);
+            }
+        }
+    )
+});
+
+app.get('/api/individual/card/:id', (req, res) => {
+    console.log(req.params.id);
+    connection.query(
+        'SELECT * FROM cards WHERE id = ?', req.params.id, (err, result) => {
+            if (err) {
+                res.sendStatus(500);
+            } else {
+                res.json(result);
             }
         }
     )
