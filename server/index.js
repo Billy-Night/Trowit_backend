@@ -64,7 +64,6 @@ app.get('/users', (req, res) => {
 app.post("/createcard", (req, res) => {
     console.log(req.body);
     let Card = {
-        id: req.body.id,
         image: req.body.image,
         type: req.body.type,
         first_name: req.body.first_name,
@@ -86,6 +85,7 @@ app.post("/createcard", (req, res) => {
         whatsapp: req.body.whatsapp,
         documents: req.body.documents,
         files: req.body.files,
+        colour: req.body.colour,
         users_id: req.body.users_id,
     };
     //To avoid SQL injection use the placeholder (?)
