@@ -64,6 +64,7 @@ app.get('/users', (req, res) => {
 app.post("/createcard", (req, res) => {
     console.log(req.body);
     let Card = {
+        image: req.body.image,
         type: req.body.type,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
@@ -75,8 +76,17 @@ app.post("/createcard", (req, res) => {
         address: req.body.address,
         website: req.body.website,
         link: req.body.link,
+        pdf: req.body.pdf,
+        twitter: req.body.twitter,
+        instagram: req.body.instagram,
+        linkedin: req.body.linkedin,
+        facebook: req.body.facebook,
+        youtube: req.body.youtube,
+        whatsapp: req.body.whatsapp,
+        documents: req.body.documents,
+        files: req.body.files,
         colour: req.body.colour,
-        users_id: req.body.users_id
+        users_id: req.body.users_id,
     };
     //To avoid SQL injection use the placeholder (?)
     connection.query('INSERT INTO cards SET ?', Card, (err) => {
@@ -190,13 +200,26 @@ app.get('/avatar', authenticateUser, (req, res) => {
 });
 
 app.get('/cards/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     connection.query(
         'SELECT * FROM cards WHERE users_id = ?', req.params.id, (err, result)  => {
             if (err) {
                 res.sendStatus(500);
             } else {
-                res.json(result)
+                res.json(result);
+            }
+        }
+    )
+});
+
+app.get('/api/individual/card/:id', (req, res) => {
+    console.log(req.params.id);
+    connection.query(
+        'SELECT * FROM cards WHERE id = ?', req.params.id, (err, result) => {
+            if (err) {
+                res.sendStatus(500);
+            } else {
+                res.json(result);
             }
         }
     )
@@ -233,6 +256,46 @@ app.post('/create-contact', (req, res) => {
             }
         });
     });
+
+app.get('/contacts/:id', (req, res) => {
+    console.log(req.params.id);
+    connection.query(
+        'SELECT * FROM contacts WHERE users_id = ?', req.params.id, (err, result)  => {
+            if (err) {
+                res.sendStatus(500);
+            } else {
+                res.json(result)
+            }
+        }
+    )
+});
+
+app.patch('/update-user/:id', (req, res) => {
+    console.log(req.params.id);
+    let uId = req.params.id;
+    let user = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name
+    }
+    connection.query(
+        'UPDATE users SET ? WHERE id = ?', [user, uId], (err) => {
+            if (err) {
+                console.log(res);
+                res.status(500).send("There is a problem");
+                console.log("There's a problem")
+            } else {
+                res.status(200).send("Done!!");
+                console.log("Good")
+            }
+        }
+    )
+})
+
+// app.post('/order-physical-card/:id', (req, res) => {
+//     connection.query(
+//         'INSERT INTO order_physical_card '
+//     )
+// })
 
 //Listening to incoming connections
 app.listen(port, (err) => {
