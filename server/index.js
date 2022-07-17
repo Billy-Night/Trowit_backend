@@ -330,8 +330,26 @@ app.patch('/update-user/:id', (req, res) => {
                 console.log("Good")
             }
         }
-    )
-})
+    );
+});
+
+app.post('/api/add/contact', (req, res) => {
+    let contact = {
+        users_id: req.body.users_id,
+        cards_id: req.body.cards_id
+    }
+    connection.query(
+        'INSERT INTO contacts SET ?', [contact], (err) => {
+            if (err) {
+                console.log("Didn't add contact");
+                res.status(500).send("There is an internal server error!");
+            } else {
+                res.status(200).send("OK");
+                console.log("added contact");
+            }
+        }
+    );
+});
 
 // app.post('/order-physical-card/:id', (req, res) => {
 //     connection.query(
