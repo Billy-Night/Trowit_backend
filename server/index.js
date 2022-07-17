@@ -301,8 +301,9 @@ app.put('/api/update/card/user/:userId/card/:cardId', (req, res) => {
 
 app.get('/contacts/:id', (req, res) => {
     // console.log(req.params.id);
+    let id = req.params.id;
     connection.query(
-        'SELECT * FROM contacts WHERE users_id = ?', req.params.id, (err, result)  => {
+        'SELECT cards.first_name, cards.last_name FROM cards JOIN contacts ON contacts.cards_id = cards.id JOIN users ON users.id = contacts.users_id WHERE users.id = ?', [id], (err, result)  => {
             if (err) {
                 res.sendStatus(500);
             } else {
