@@ -303,7 +303,7 @@ app.get('/contacts/:id', (req, res) => {
     // console.log(req.params.id);
     let id = req.params.id;
     connection.query(
-        'SELECT cards.first_name, cards.last_name FROM cards JOIN contacts ON contacts.cards_id = cards.id JOIN users ON users.id = contacts.users_id WHERE users.id = ?', [id], (err, result)  => {
+        'SELECT cards.first_name, cards.last_name, cards.title, cards.company FROM cards JOIN contacts ON contacts.cards_id = cards.id JOIN users ON users.id = contacts.users_id WHERE users.id = ?', [id], (err, result)  => {
             if (err) {
                 res.sendStatus(500);
             } else {
