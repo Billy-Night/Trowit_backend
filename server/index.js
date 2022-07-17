@@ -62,7 +62,7 @@ app.get('/users', (req, res) => {
 
 // This is getting ready to receive the frontend information that will create a new card.
 app.post("/createcard", (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     let Card = {
         image: req.body.image,
         type: req.body.type,
@@ -213,7 +213,7 @@ app.get('/cards/:id', (req, res) => {
 });
 
 app.get('/api/individual/card/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     connection.query(
         'SELECT * FROM cards WHERE id = ?', req.params.id, (err, result) => {
             if (err) {
@@ -257,8 +257,50 @@ app.post('/create-contact', (req, res) => {
         });
     });
 
+// PUT is a method of updating the entire resource and PATCH is used to update a fraction of the resource.
+app.put('/api/update/card/user/:userId/card/:cardId', (req, res) => {
+    let cardId = req.params.cardId;
+    console.log(`Card id ${cardId}`);
+    let userId = req.params.userId;
+    console.log(`User id ${userId}`);
+    const updateCard = {
+        image: req.body.image,
+        type: req.body.type,
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        title: req.body.title,
+        department: req.body.department,
+        company: req.body.company,
+        phone: req.body.phone,
+        email: req.body.email,
+        address: req.body.address,
+        website: req.body.website,
+        link: req.body.link,
+        pdf: req.body.pdf,
+        twitter: req.body.twitter,
+        instagram: req.body.instagram,
+        linkedin: req.body.linkedin,
+        facebook: req.body.facebook,
+        youtube: req.body.youtube,
+        whatsapp: req.body.whatsapp,
+        documents: req.body.documents,
+        files: req.body.files,
+        colour: req.body.colour,
+    }
+    connection.query(
+        'UPDATE cards SET ? WHERE id = ? AND users_id = ?', [updateCard, cardId, userId], (err) => {
+            if (err) {
+                res.status(500).send("There was a problem updating the card");
+            } else {
+                // HTTP 200 for ok PUT
+                res.status(200).send("Good job the card is updated");
+            }
+        }
+    )
+})
+
 app.get('/contacts/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     connection.query(
         'SELECT * FROM contacts WHERE users_id = ?', req.params.id, (err, result)  => {
             if (err) {
@@ -271,7 +313,7 @@ app.get('/contacts/:id', (req, res) => {
 });
 
 app.patch('/update-user/:id', (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     let uId = req.params.id;
     let user = {
         first_name: req.body.first_name,
