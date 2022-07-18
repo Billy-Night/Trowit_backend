@@ -41,7 +41,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 app.get("/", (req, res) => {
-    res.send("Welcome to Trowit backend, check your console to see if your connected to the database");
+    res.send("Welcome to Trowit backend, check your console to see if you're connected to the database");
 });
 
 app.get('/users', (req, res) => {
@@ -93,7 +93,7 @@ app.post("/createcard", (req, res) => {
         if(err) {
             res.status(500).send('Server error, could not add new card into DB')
         } else {
-            res.status(201).send("Success adding the card!");
+            res.status(201).send("Success adding the new card!");
         }
     });
 });
@@ -104,14 +104,8 @@ app.post("/registration", (req, res) => {
      .hash(req.body.hash_password, 10)
      .then((hashedPassword) => {
         let newUser = {
-            // image_url: req.body.image_url,
-            // first_name: req.body.first_name,
-            // last_name: req.body.last_name,
             email: req.body.email,
             hash_password: hashedPassword,
-            // birthday: req.body.email,
-            // subscription: req.body.subscription,
-            // date: req.body.date,
         };
         connection.query('INSERT INTO users SET ?', newUser, (err) => {
             if(err) {
@@ -217,7 +211,7 @@ app.get('/api/individual/card/:id', (req, res) => {
     connection.query(
         'SELECT * FROM cards WHERE id = ?', req.params.id, (err, result) => {
             if (err) {
-                res.sendStatus(500);
+                res.status(500).send("Server error finding individual card");
             } else {
                 res.json(result);
             }
@@ -247,7 +241,7 @@ app.post('/create-contact', (req, res) => {
         notes: req.body.notes,
         users_id: req.body.users_id
     }
-    console.log(contactCard);
+    // console.log(contactCard);
         connection.query('INSERT INTO contacts SET ?', contactCard, (err) => {
             if(err) {
                 res.status(500).send('Server error, could not add new card into DB')
@@ -260,9 +254,9 @@ app.post('/create-contact', (req, res) => {
 // PUT is a method of updating the entire resource and PATCH is used to update a fraction of the resource.
 app.put('/api/update/card/user/:userId/card/:cardId', (req, res) => {
     let cardId = req.params.cardId;
-    console.log(`Card id ${cardId}`);
+    // console.log(`Card id ${cardId}`);
     let userId = req.params.userId;
-    console.log(`User id ${userId}`);
+    // console.log(`User id ${userId}`);
     const updateCard = {
         image: req.body.image,
         type: req.body.type,
@@ -323,12 +317,12 @@ app.patch('/update-user/:id', (req, res) => {
     connection.query(
         'UPDATE users SET ? WHERE id = ?', [user, uId], (err) => {
             if (err) {
-                console.log(res);
-                res.status(500).send("There is a problem");
-                console.log("There's a problem")
+                // console.log(res);
+                res.status(500).send("There is a problem updating the user");
+                // console.log("There's a problem")
             } else {
-                res.status(200).send("Done!!");
-                console.log("Good")
+                res.status(200).send("User details updated");
+                // console.log("Good")
             }
         }
     );
@@ -342,11 +336,11 @@ app.post('/api/add/contact', (req, res) => {
     connection.query(
         'INSERT INTO contacts SET ?', [contact], (err) => {
             if (err) {
-                console.log("Didn't add contact");
-                res.status(500).send("There is an internal server error!");
+                // console.log("Didn't add contact");
+                res.status(500).send("There is an internal server error adding contact!");
             } else {
-                res.status(200).send("OK");
-                console.log("added contact");
+                res.status(200).send("OK contact added");
+                // console.log("added contact");
             }
         }
     );
