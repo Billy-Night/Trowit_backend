@@ -15,6 +15,7 @@ const jwt = require("jsonwebtoken");
 
 //import cors
 const cors = require("cors");
+const { request } = require('express');
 
 //Set up the port to run off the .env or 5000
 const port = process.env.PORT ?? 5000;
@@ -346,11 +347,29 @@ app.post('/api/add/contact', (req, res) => {
     );
 });
 
-// app.post('/order-physical-card/:id', (req, res) => {
-//     connection.query(
-//         'INSERT INTO order_physical_card '
-//     )
-// })
+app.post('/api/order/physical/card/address', (req, res) => {
+    console.log(req.body);
+    let address = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        street_and_number: req.body.street_and_number,
+        city: req.body.city,
+        zip_code: req.body.zip_code,
+        country: req.body.country,
+        phone_number: req.body.phone_number,
+        users_id: req.body.users_id
+    }
+    connection.query(
+        'INSERT INTO card_order_address SET ?', [address], (err) => {
+            if (err) {
+                res.status(500).send("There was an internal error adding address");
+                console.log(err);
+            } else {
+                res.status(200).send("Address successfully added")
+            }
+        }
+    );
+});
 
 //Listening to incoming connections
 app.listen(port, (err) => {
