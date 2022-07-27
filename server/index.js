@@ -360,16 +360,27 @@ app.post('/api/order/physical/card/address', (req, res) => {
         users_id: req.body.users_id
     }
     connection.query(
-        'INSERT INTO card_order_address SET ?', [address], (err) => {
+        'INSERT INTO card_order_address SET ?', [address], (err, results) => {
             if (err) {
                 res.status(500).send("There was an internal error adding address");
                 console.log(err);
             } else {
                 res.status(200).send("Address successfully added")
+                console.log(results.insertId);
             }
         }
     );
 });
+
+app.get('/api/order/address/user', (req, res) => {
+    connection.query('SELECT MAX(ID) FROM card_order_address', (err, results) => {
+        if (err) {
+            res.status(500).send("There was an internal error retrieving the last ID added to the table");
+        } else {
+            res.json(results);
+        }
+    })
+})
 
 //Listening to incoming connections
 app.listen(port, (err) => {
